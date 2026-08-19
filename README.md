@@ -1,6 +1,6 @@
 # Cora
 
-Cora یک رابط فارسی RTL برای گفتگو، کدنویسی و ساخت تصویر با PHP + MySQL است. رابط کاربری عمداً فقط برند **Cora** را به کاربر نشان می‌دهد؛ سرویس‌های زیرساختی و توکن‌ها فقط در backend تنظیم می‌شوند.
+Cora یک رابط فارسی RTL برای گفتگو، کدنویسی و ساخت تصویر با PHP + MySQL است. رابط کاربری فقط برند **Cora** را به کاربر نشان می‌دهد؛ سرویس‌های زیرساختی و توکن‌ها فقط در backend تنظیم می‌شوند.
 
 ## نصب سریع روی XAMPP
 
@@ -35,11 +35,11 @@ return [
 
 مدل پیش‌فرض تصویر:
 
-`stabilityai/stable-diffusion-3-medium-diffusers`
+`black-forest-labs/FLUX.1-schnell`
 
-این مدل روی مسیر Text-to-Image مخصوص HF Inference استفاده می‌شود؛ endpoint سازگار OpenAI فقط برای Chat است و برای تصویر استفاده نمی‌شود.
+Cora برای تصویر از مسیر provider مخصوص Text-to-Image استفاده می‌کند (`router.huggingface.co/together/v1/images/generations`). endpoint سازگار OpenAI فقط برای Chat است و برای تولید تصویر استفاده نمی‌شود.
 
-**مهم:** برای اولین استفاده ممکن است لازم باشد در حساب Hugging Face شرایط دسترسی مدل Stability AI را یک‌بار قبول کنی. توکن باید permission مربوط به Inference Providers داشته باشد.
+توکن باید permission مربوط به Inference Providers داشته باشد. میزان استفاده از تصویر به اعتبار/سهمیه حساب نیز وابسته است.
 
 خروجی تصویر در backend با واترمارک `CORA AI` علامت‌گذاری می‌شود؛ اگر PHP GD نصب نباشد، واترمارک نمایشی UI همچنان نشان داده می‌شود ولی برای واترمارک دائمی داخل فایل باید extension `gd` را فعال کنی.
 
@@ -51,7 +51,6 @@ return [
 - Model Picker با آواتار واقعی سازندگان مدل‌ها
 - پنجره جمع‌وجور ساخت تصویر
 - انیمیشن neural-network / particles هنگام ساخت تصویر
-- حداقل زمان transition برای جلوگیری از پرش ناگهانی کارت تصویر
 - Streaming واقعی پاسخ + تایپ نرم حروف‌به‌حروف
 - Markdown امن
 - Code blocks و Copy
