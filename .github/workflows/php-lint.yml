@@ -1,4 +1,4 @@
-name: PHP Lint
+name: Cora Syntax Check
 
 on:
   push:
@@ -10,7 +10,7 @@ permissions:
   contents: read
 
 jobs:
-  lint:
+  syntax:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -25,3 +25,5 @@ jobs:
           while IFS= read -r -d '' file; do
             php -l "$file"
           done < <(find . -type f -name '*.php' -print0)
+      - name: Check JavaScript syntax
+        run: node --check assets/app.js
