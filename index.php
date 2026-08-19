@@ -7,49 +7,151 @@ require __DIR__ . '/src/bootstrap.php';
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <meta name="theme-color" content="#111217">
-  <meta name="description" content="Cora AI - دستیار فارسی مبتنی بر Hugging Face برای گفتگو، کدنویسی و ساخت تصویر">
-  <title>Cora AI</title>
+  <meta name="theme-color" content="#0b0b0d">
+  <meta name="description" content="Cora — دستیار هوش مصنوعی برای گفتگو، کدنویسی و ساخت تصویر">
+  <title>Cora</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="icon" href="assets/cora-logo.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="assets/app.css?v=2">
+  <link rel="stylesheet" href="assets/app.css?v=4">
 </head>
 <body>
-<div class="app-shell">
+<div class="shell" id="shell">
   <aside class="sidebar" id="sidebar">
-    <div class="sidebar-head">
-      <button class="brand" id="brandHome" type="button"><img src="assets/cora-logo.svg" alt="Cora"><span><b>Cora</b><small>Hugging Face AI</small></span></button>
-      <button class="icon-btn sidebar-close" id="sidebarClose" type="button" aria-label="بستن منو">×</button>
+    <div class="side-top">
+      <button class="brand" id="homeButton" type="button">
+        <img src="assets/cora-logo.svg" alt="" class="brand-logo">
+        <span class="brand-copy"><b>Cora</b><small>Intelligence</small></span>
+      </button>
+      <button class="icon-button mobile-only" id="sidebarClose" type="button" aria-label="بستن"><svg viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg></button>
     </div>
-    <button class="new-chat" id="newChat" type="button"><span class="plus">+</span><span>گفتگوی جدید</span><kbd>Ctrl K</kbd></button>
-    <label class="side-search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input id="historySearch" type="search" autocomplete="off" placeholder="جستجو در گفتگوها"></label>
-    <div class="mode-switcher"><button class="mode-btn active" data-mode="chat" type="button"><span>گفتگو</span><small>Text</small></button><button class="mode-btn" data-mode="image" type="button"><span>تصویر</span><small>FLUX</small></button></div>
-    <div class="history-head"><span>تاریخچه</span><button id="refreshHistory" class="tiny-btn" type="button">↻</button></div>
-    <div class="history-list" id="historyList"><div class="history-skeleton"><i></i><i></i><i></i></div></div>
-    <div class="sidebar-bottom">
-      <div class="quota-card"><div class="quota-title"><span>مصرف امروز</span><b id="providerLabel">Hugging Face</b></div><div class="quota-row"><span>گفتگو</span><small id="chatUsageText">0 / 60</small></div><div class="quota-track"><i id="chatUsageBar"></i></div><div class="quota-row"><span>تصویر</span><small id="imageUsageText">0 / 6</small></div><div class="quota-track"><i id="imageUsageBar"></i></div></div>
-      <button class="profile-card" id="profileButton" type="button"><span class="avatar" id="sidebarAvatar">C</span><span><b id="sidebarName">حساب کاربری</b><small id="sidebarEmail">برای ذخیره تاریخچه وارد شوید</small></span><em>•••</em></button>
+
+    <button class="new-chat" id="newChat" type="button">
+      <span class="new-chat-icon"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></span>
+      <span>گفتگوی جدید</span>
+      <kbd>Ctrl K</kbd>
+    </button>
+
+    <label class="history-search">
+      <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.6-3.6"/></svg>
+      <input id="historySearch" type="search" placeholder="جستجوی گفتگو..." autocomplete="off">
+    </label>
+
+    <div class="side-label"><span>گفتگوها</span><button id="refreshHistory" type="button" aria-label="تازه‌سازی"><svg viewBox="0 0 24 24"><path d="M20 11a8 8 0 1 0-2.2 5.5"/><path d="M20 4v7h-7"/></svg></button></div>
+    <div class="history-list" id="historyList"><div class="history-placeholder"><i></i><i></i><i></i></div></div>
+
+    <div class="side-footer">
+      <div class="quota" id="quotaCard">
+        <div class="quota-head"><span>سهمیه امروز</span><strong id="quotaText">—</strong></div>
+        <div class="quota-track"><i id="quotaBar"></i></div>
+      </div>
+      <button class="account" id="accountButton" type="button">
+        <span class="account-avatar" id="accountAvatar">C</span>
+        <span><b id="accountName">حساب Cora</b><small id="accountEmail">ورود برای ذخیره تاریخچه</small></span>
+        <svg viewBox="0 0 24 24"><circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/></svg>
+      </button>
     </div>
   </aside>
-  <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
   <main class="main">
     <header class="topbar">
-      <div class="top-start"><button class="icon-btn menu-btn" id="menuButton" type="button" aria-label="منو">☰</button><button class="model-chip" id="modelChip" type="button"><span class="model-icon-wrap" id="modelIconWrap"><img id="modelIcon" alt=""></span><span><b id="modelName">Qwen 2.5 7B</b><small id="modelType">Hugging Face · گفتگو</small></span><span class="chev">⌄</span></button></div>
-      <div class="top-actions"><button class="icon-btn theme-btn" id="themeToggle" type="button" aria-label="تغییر تم"><span class="sun">☀</span><span class="moon">☾</span></button><button class="clean-btn" id="clearChat" type="button">پاک‌کردن صفحه</button><button class="login-top" id="loginTop" type="button">ورود / ثبت‌نام</button></div>
+      <div class="topbar-start">
+        <button class="icon-button menu-button" id="menuButton" type="button" aria-label="منو"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+        <button class="model-trigger" id="modelTrigger" type="button">
+          <img id="activeModelAvatar" src="assets/cora-logo.svg" alt="">
+          <span><b id="activeModelName">Cora</b><small id="activeModelHint">مدل هوشمند</small></span>
+          <svg viewBox="0 0 24 24"><path d="m9 10 3 3 3-3"/></svg>
+        </button>
+      </div>
+      <div class="topbar-actions">
+        <button class="image-launch" id="imageLaunch" type="button"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="9" cy="9" r="2"/><path d="m21 15-5-5L5 21"/></svg><span>ساخت تصویر</span></button>
+        <button class="icon-button" id="themeToggle" type="button" aria-label="تغییر پوسته"><svg viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8Z"/></svg></button>
+        <button class="login-button" id="loginButton" type="button">ورود</button>
+      </div>
     </header>
-    <section class="chat-scroll" id="chatScroll">
-      <div class="welcome" id="welcome"><div class="hero-mark"><img src="assets/cora-logo.svg" alt="Cora"></div><div class="eyebrow"><span></span> Cora AI روی Hugging Face</div><h1>کمکت می‌کنم <span>فکر کنی، بسازی و کد بزنی.</span></h1><p>یک محیط تمیز برای گفتگوی فارسی، برنامه‌نویسی و تولید تصویر؛ با مدل قابل انتخاب و تاریخچه کامل.</p>
-        <div class="suggestions"><button class="suggestion" data-prompt="یک معماری امن و حرفه‌ای برای پروژه PHP و MySQL من پیشنهاد بده"><b>معماری نرم‌افزار</b><small>امنیت، ساختار و دیتابیس</small><span>↗</span></button><button class="suggestion" data-prompt="این کد را حرفه‌ای بازنویسی کن و مشکلات امنیتی‌اش را توضیح بده"><b>بررسی کد</b><small>دیباگ و بازنویسی</small><span>↗</span></button><button class="suggestion" data-mode="image" data-prompt="یک شهر آینده‌نگر ایرانی، مینیمال، معماری مدرن با جزئیات کاشی ایرانی، cinematic"><b>ساخت تصویر</b><small>FLUX روی Hugging Face</small><span>↗</span></button><button class="suggestion" data-prompt="یک تحلیل عمیق و ساختاریافته از آینده مدل‌های متن‌باز هوش مصنوعی ارائه کن"><b>تحلیل عمیق</b><small>استدلال و جمع‌بندی</small><span>↗</span></button></div>
-      </div><div class="messages" id="messages" aria-live="polite"></div>
+
+    <section class="conversation" id="conversation">
+      <div class="welcome" id="welcome">
+        <div class="hero-mark"><img src="assets/cora-logo.svg" alt="Cora"><span></span></div>
+        <h1>چی می‌خوای بسازیم؟</h1>
+        <p>سؤال بپرس، کد بنویس، تحلیل کن یا ایده‌ات را به تصویر تبدیل کن.</p>
+        <div class="starter-grid">
+          <button class="starter" data-prompt="یک API امن با PHP و MySQL طراحی کن و ساختارش را مرحله‌به‌مرحله توضیح بده"><span>⌁</span><b>کدنویسی</b><small>طراحی، دیباگ و معماری</small></button>
+          <button class="starter" data-prompt="این موضوع را عمیق تحلیل کن و نکات اصلی و ریسک‌ها را جدا بنویس"><span>◌</span><b>تحلیل</b><small>جمع‌بندی دقیق و ساختاریافته</small></button>
+          <button class="starter" data-image="1" data-prompt="یک شهر آینده‌نگر ایرانی در شب با معماری مدرن، جزئیات سینمایی و ترکیب‌بندی حرفه‌ای"><span>✦</span><b>تصویر</b><small>ایده را به تصویر تبدیل کن</small></button>
+        </div>
+      </div>
+      <div class="messages" id="messages" aria-live="polite"></div>
+      <div class="bottom-space"></div>
     </section>
-    <div class="composer-wrap"><div class="image-mode-banner" id="imageModeBanner"><div><b>حالت ساخت تصویر</b><small id="imageModelLabel">FLUX.1 Schnell</small></div><select id="imageSize"><option value="1024x1024">1:1 · 1024</option><option value="768x1024">3:4 · عمودی</option><option value="1024x768">4:3 · افقی</option></select><button id="exitImageMode" type="button">×</button></div>
-      <form class="composer" id="composer"><textarea id="prompt" rows="1" maxlength="16000" placeholder="از Cora بپرس..."></textarea><div class="composer-bottom"><div class="composer-tools"><button class="tool-btn" id="imageModeButton" type="button">▧ <span>تصویر</span></button><button class="tool-btn" id="modelMiniButton" type="button">◈ <span id="miniModelName">Qwen 2.5 7B</span></button></div><div class="send-area"><span id="charCount">0 / 16000</span><button class="send-btn" id="sendButton" type="submit"><span class="send-icon">↑</span><span class="stop-icon">■</span></button></div></div></form><p class="composer-note">خروجی مدل ممکن است خطا داشته باشد؛ اطلاعات مهم را بررسی کن.</p>
+
+    <div class="composer-dock">
+      <form class="composer" id="composer">
+        <textarea id="prompt" rows="1" maxlength="16000" placeholder="پیامت را بنویس..." aria-label="پیام"></textarea>
+        <div class="composer-bottom">
+          <div class="composer-status"><span class="live-dot"></span><span id="composerStatus">Cora آماده است</span></div>
+          <div class="composer-actions">
+            <button class="mini-image" id="miniImage" type="button" title="ساخت تصویر"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="9" cy="9" r="2"/><path d="m21 15-5-5L5 21"/></svg></button>
+            <button class="send" id="sendButton" type="submit" aria-label="ارسال"><svg class="send-arrow" viewBox="0 0 24 24"><path d="M12 19V5M6 11l6-6 6 6"/></svg><svg class="send-stop" viewBox="0 0 24 24"><rect x="7" y="7" width="10" height="10" rx="2"/></svg></button>
+          </div>
+        </div>
+      </form>
+      <div class="fine-print">Cora ممکن است اشتباه کند؛ اطلاعات مهم را بررسی کن.</div>
     </div>
   </main>
 </div>
-<div class="modal-backdrop" id="modelModal" role="dialog" aria-modal="true"><div class="modal model-modal"><div class="modal-head"><div><b>انتخاب مدل</b><small>مدل‌های واقعی Hugging Face Inference Providers</small></div><button id="modelClose" type="button">×</button></div><div class="model-tabs"><button class="active" data-model-tab="chat" type="button">گفتگو</button><button data-model-tab="image" type="button">تصویر</button></div><div class="model-list" id="modelList"></div><div class="model-note">مدل‌ها از Hugging Face اجرا می‌شوند و از اعتبار همان حساب استفاده می‌کنند. «رایگان» یعنی در محدوده Free tier، نه نامحدود.</div></div></div>
-<div class="modal-backdrop" id="authModal" role="dialog" aria-modal="true"><div class="modal auth-modal"><div class="auth-brand"><img src="assets/cora-logo.svg" alt="Cora"><div><b id="authTitle">ورود به Cora</b><small>تاریخچه و تنظیماتت را ذخیره کن</small></div><button id="authClose" type="button">×</button></div><div class="auth-tabs"><button class="active" data-auth-tab="login" type="button">ورود</button><button data-auth-tab="register" type="button">ثبت‌نام</button></div><div class="auth-error" id="authError"></div><form id="loginForm" class="auth-form"><label>ایمیل<input name="email" type="email" required autocomplete="email" placeholder="you@example.com"></label><label>رمز عبور<input name="password" type="password" required autocomplete="current-password" minlength="8"></label><button type="submit">ورود</button></form><form id="registerForm" class="auth-form hidden"><label>نام<input name="name" type="text" required minlength="2" maxlength="80"></label><label>ایمیل<input name="email" type="email" required autocomplete="email"></label><label>رمز عبور<input name="password" type="password" required minlength="8" autocomplete="new-password"></label><button type="submit">ساخت حساب</button></form></div></div>
-<div class="toasts" id="toasts"></div><script src="assets/app.js?v=2" defer></script>
-</body></html>
+
+<div class="modal" id="modelModal" role="dialog" aria-modal="true">
+  <div class="model-panel panel">
+    <div class="panel-head"><div><b>انتخاب مدل</b><small>مدل مناسب کارت را انتخاب کن</small></div><button class="close-button" data-close="modelModal">×</button></div>
+    <div class="model-list" id="modelList"></div>
+  </div>
+</div>
+
+<div class="modal" id="imageStudio" role="dialog" aria-modal="true">
+  <div class="image-panel panel">
+    <div class="panel-head"><div><b>تصویر با Cora</b><small>مختصر توضیح بده؛ جزئیات را Cora کامل می‌کند</small></div><button class="close-button" data-close="imageStudio">×</button></div>
+    <div class="image-stage" id="imageStage">
+      <canvas id="neuralCanvas" width="720" height="720"></canvas>
+      <div class="image-idle" id="imageIdle"><img src="assets/cora-logo.svg" alt=""><span>تصویر اینجا ساخته می‌شود</span></div>
+      <div class="image-progress" id="imageProgress"><b>در حال شکل‌گیری</b><small id="imageProgressText">اتصال نقاط...</small><div class="progress-dots"><i></i><i></i><i></i><i></i></div></div>
+      <img id="generatedImage" alt="تصویر ساخته‌شده توسط Cora">
+      <span class="copyright-chip">© CORA AI</span>
+    </div>
+    <textarea id="imagePrompt" rows="3" maxlength="6000" placeholder="مثلاً: یک خودرو مفهومی مشکی در خیابان بارانی تهران، نور سینمایی..."></textarea>
+    <div class="image-controls">
+      <select id="imageSize"><option value="1024x1024">مربع 1:1</option><option value="768x1024">عمودی 3:4</option><option value="1024x768">افقی 4:3</option></select>
+      <button class="generate-button" id="generateImage" type="button"><span>ساخت تصویر</span><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="authModal" role="dialog" aria-modal="true">
+  <div class="auth-panel panel">
+    <button class="close-button auth-close" data-close="authModal">×</button>
+    <img src="assets/cora-logo.svg" alt="Cora" class="auth-logo">
+    <h2>به Cora خوش اومدی</h2>
+    <p>تاریخچه، مدل انتخابی و تصاویرت را نگه دار.</p>
+    <div class="auth-tabs"><button class="active" data-auth-tab="login">ورود</button><button data-auth-tab="register">ثبت‌نام</button></div>
+    <div class="auth-error" id="authError"></div>
+    <form id="loginForm" class="auth-form">
+      <label>ایمیل<input name="email" type="email" required autocomplete="email"></label>
+      <label>رمز عبور<input name="password" type="password" required autocomplete="current-password"></label>
+      <button type="submit">ورود به Cora</button>
+    </form>
+    <form id="registerForm" class="auth-form hidden">
+      <label>نام<input name="name" type="text" minlength="2" maxlength="80" required autocomplete="name"></label>
+      <label>ایمیل<input name="email" type="email" required autocomplete="email"></label>
+      <label>رمز عبور<input name="password" type="password" minlength="10" required autocomplete="new-password"><small>حداقل ۱۰ کاراکتر، شامل حرف و عدد</small></label>
+      <button type="submit">ساخت حساب</button>
+    </form>
+  </div>
+</div>
+
+<div class="toast-zone" id="toastZone"></div>
+<script src="assets/app.js?v=4" defer></script>
+</body>
+</html>
