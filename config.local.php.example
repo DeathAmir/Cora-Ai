@@ -1,0 +1,6 @@
+<?php
+return [
+    // این فایل را به config.local.php تغییر نام بده و توکن Hugging Face را اینجا بگذار.
+    // config.local.php در Git نادیده گرفته می‌شود و از وب نیز مسدود است.
+    'hf_token' => 'hf_PASTE_YOUR_TOKEN_HERE',
+];
